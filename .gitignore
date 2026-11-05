@@ -1,0 +1,6 @@
+.streamlit/secrets.toml
+*.sqlite3*
+__pycache__/
+*.log
+.env
+.local_packages/
