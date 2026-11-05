@@ -74,6 +74,8 @@ if role != "presenter":
     st.caption("Audience activity · 9 close values · 2 clusters")
     if setting("voting", "open") != "open":
         st.info("Voting is closed. Please look at the projected screen for the reveal.")
+        if st.button("Check whether voting has opened"):
+            st.rerun()
         st.stop()
     st.write("**Your challenge:** For each letter, select the centroid it appears closest to. "
              "The stars are the initial centroids. Blue = C1, Orange = C2.")
@@ -134,12 +136,14 @@ if st.button("Lock dashboard"):
     st.rerun()
 
 with st.expander("Audience link and QR code", expanded=True):
-    default_url = os.getenv("PUBLIC_APP_URL", "")
+    default_url = setting("public_url", os.getenv("PUBLIC_APP_URL", ""))
     public_url = st.text_input("Paste your deployed app URL here", value=default_url,
                                placeholder="https://your-app.streamlit.app/")
     parsed = urlsplit(public_url)
     if parsed.scheme in ("http", "https") and parsed.netloc and not parsed.username:
         audience_url = urlunsplit((parsed.scheme, parsed.netloc, parsed.path, "", ""))
+        if audience_url != default_url:
+            change_setting("public_url", audience_url)
         st.link_button("Open audience voting", audience_url)
         st.code(audience_url, language=None)
         st.caption("Share the audience URL only. Your presenter address is:")
